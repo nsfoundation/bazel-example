@@ -21,6 +21,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      # Namespace Linux runners do not package bazel yet.
+      - name: Install Bazel
+        if: ${{ startsWith(matrix.os, 'namespace-') && runner.os == 'Linux' }}
+        run: |
+          # Install bazelisk
+          npm install -g @bazel/bazelisk
+
+          # run bazelisk once in order to install /usr/local/bin/bazel binary
+          sudo bazel version
+
       - name: Set up Bazel cache
         run: |
           nsc version
