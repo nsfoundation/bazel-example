@@ -1,0 +1,47 @@
+name: Remote Bazel cache with nsc
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    # The type of runner that the job will run on
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - namespace-profile-macos
+
+        folder:
+          - 'angular-ngc'
+          - 'bufbuild'
+          - 'protobufjs'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.21.x
+          cache: false
+
+      - name: Set up Bazel cache
+        run: |
+          # Install nsc v0.0.385
+          go install namespacelabs.dev/foundation/cmd/nsc@115e140b5100fca177f2c0b6ff97a11d08e76cf5
+
+          nsc bazel cache setup --output_to=/tmp/bazel.tmp
+
+      - name: bazel test //...
+        working-directory: ${{ matrix.folder }}
+        run: |
+          export BAZEL_REMOTE_CONFIG=$(cat /tmp/bazel.tmp)
+
+          echo $BAZEL_REMOTE_CONFIG
+
+          bazel \
+            --bazelrc=$BAZEL_REMOTE_CONFIG \
+            test //...
