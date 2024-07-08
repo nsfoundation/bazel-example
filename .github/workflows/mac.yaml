@@ -24,11 +24,9 @@ jobs:
         run: |
           nsc version
 
-          nsc bazel cache setup --output_to=/tmp/bazelcache.txt
+          nsc bazel cache setup --bazelrc=/tmp/bazel-cache.bazelrc
 
       - name: bazel test //...
         working-directory: ${{ matrix.folder }}
         run: |
-          export BAZEL_CACHE_CONFIG=$(cat /tmp/bazelcache.txt)
-
-          bazel --bazelrc=$BAZEL_CACHE_CONFIG test //...
+          bazel --bazelrc=/tmp/bazel-cache.bazelrcFIG test //...
