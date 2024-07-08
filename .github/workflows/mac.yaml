@@ -15,7 +15,6 @@ jobs:
           - namespace-profile-macos
 
         folder:
-          - "angular-ngc"
           - "bufbuild"
 
     steps:

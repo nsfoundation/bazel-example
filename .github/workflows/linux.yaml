@@ -15,7 +15,6 @@ jobs:
           - namespace-profile-default
 
         folder:
-          - "angular-ngc"
           - "bufbuild"
 
     steps:
