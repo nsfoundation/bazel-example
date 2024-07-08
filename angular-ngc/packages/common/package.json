@@ -1,5 +1,0 @@
-{
-  "name": "@ngc-example/common",
-  "private": true,
-  "main": "src/public-api"
-}
