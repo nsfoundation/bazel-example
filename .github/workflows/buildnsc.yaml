@@ -15,9 +15,9 @@ jobs:
           - namespace-profile-macos
 
         folder:
-          - 'angular-ngc'
-          - 'bufbuild'
-          - 'protobufjs'
+          - "angular-ngc"
+          - "bufbuild"
+          - "protobufjs"
 
     steps:
       - uses: actions/checkout@v3
@@ -30,18 +30,11 @@ jobs:
 
       - name: Set up Bazel cache
         run: |
-          # Install nsc v0.0.385
-          go install namespacelabs.dev/foundation/cmd/nsc@115e140b5100fca177f2c0b6ff97a11d08e76cf5
-
-          nsc bazel cache setup --output_to=/tmp/bazel.tmp
+          nsc bazel cache setup --output_to=/tmp/bazelcache.txt
 
       - name: bazel test //...
         working-directory: ${{ matrix.folder }}
         run: |
-          export BAZEL_REMOTE_CONFIG=$(cat /tmp/bazel.tmp)
+          export BAZEL_CACHE_CONFIG=$(cat /tmp/bazelcache.txt)
 
-          echo $BAZEL_REMOTE_CONFIG
-
-          bazel \
-            --bazelrc=$BAZEL_REMOTE_CONFIG \
-            test //...
+          bazel --bazelrc=$BAZEL_CACHE_CONFIG test //...
