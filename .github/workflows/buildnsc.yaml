@@ -21,14 +21,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: 1.21.x
-          cache: false
-
       - name: Set up Bazel cache
         run: |
+          nsc version
+
           nsc bazel cache setup --output_to=/tmp/bazelcache.txt
 
       - name: bazel test //...
