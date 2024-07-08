@@ -1,0 +1,35 @@
+name: Remote Bazel cache Linux
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    # The type of runner that the job will run on
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - namespace-profile-default
+
+        folder:
+          - "angular-ngc"
+          - "bufbuild"
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Bazel cache
+        run: |
+          nsc version
+
+          nsc bazel cache setup --output_to=/tmp/bazelcache.txt
+
+      - name: bazel test //...
+        working-directory: ${{ matrix.folder }}
+        run: |
+          export BAZEL_CACHE_CONFIG=$(cat /tmp/bazelcache.txt)
+
+          bazel --bazelrc=$BAZEL_CACHE_CONFIG test //...

@@ -1,4 +1,4 @@
-name: Remote Bazel cache with nsc
+name: Remote Bazel cache MacOS
 
 on:
   workflow_dispatch:
