@@ -3,12 +3,23 @@ module(
     version = "0.0.0",
 )
 
-bazel_dep(name = "rules_go", version = "0.55.1")
+bazel_dep(name = "rules_go", version = "0.57.0")
+bazel_dep(name = "apple_support", version = "1.22.1")
 bazel_dep(name = "rules_proto", version = "7.1.0")
 bazel_dep(name = "protobuf", version = "33.4", repo_name = "com_google_protobuf")
 bazel_dep(name = "platforms", version = "1.0.0")
 bazel_dep(name = "bazel_skylib", version = "1.8.2")
 bazel_dep(name = "gazelle", version = "0.43.0")
+
+# Hermetic prebuilt protoc. Without this, @com_google_protobuf would build protoc from source and require a C++ toolchain.
+bazel_dep(name = "toolchains_protoc", version = "0.4.3")
+
+protoc = use_extension("@toolchains_protoc//protoc:extensions.bzl", "protoc")
+protoc.toolchain(
+    google_protobuf = "com_google_protobuf",
+    version = "v29.0",
+)
+register_toolchains("@toolchains_protoc//protoc:all")
 
 go_sdk = use_extension("@rules_go//go:extensions.bzl", "go_sdk")
 go_sdk.download(version = "1.21.5")
