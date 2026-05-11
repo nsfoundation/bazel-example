@@ -1,4 +1,5 @@
-load("@rules_proto//proto:defs.bzl", "proto_common")
+load("@com_google_protobuf//bazel/common:proto_common.bzl", "proto_common")
+load("@com_google_protobuf//bazel/common:proto_info.bzl", "ProtoInfo")
 
 def _buf_gen_impl(ctx):
     buf_toolchain = ctx.toolchains["//:buf_toolchain_type"]

@@ -79,9 +79,15 @@ def _buf_repo_impl(rctx):
         version = rctx.attr.buf_version,
         platform = rctx.attr.platform,
     )
+
+    # `canonical_id` is required for the Remote Asset API
     rctx.download_and_extract(
         url = url,
         integrity = VERSIONS[rctx.attr.buf_version][rctx.attr.platform],
+        canonical_id = "buf-{version}-{platform}".format(
+            version = rctx.attr.buf_version,
+            platform = rctx.attr.platform,
+        ),
     )
     rctx.file("BUILD.bazel", BUF_BUILD_TMPL)
 
@@ -91,24 +97,5 @@ buf_repositories = repository_rule(
     attrs = {
         "buf_version": attr.string(mandatory = True, values = VERSIONS.keys()),
         "platform": attr.string(mandatory = True, values = PLATFORMS.keys()),
-        "_launcher_tpl": attr.label(default = "//buf/private/registry:buf_launcher.sh.tpl"),
     },
 )
-
-def buf_register_toolchains(name, buf_version):
-    buf_toolchain_name = "{name}_toolchains".format(name = name)
-
-    for platform in PLATFORMS.keys():
-        buf_repositories(
-            name = "{name}_{platform}".format(name = name, platform = platform),
-            platform = platform,
-            buf_version = buf_version,
-        )
-        native.register_toolchains("@{}//:{}_toolchain".format(buf_toolchain_name, platform))
-
-    toolchains_repo(
-        name = buf_toolchain_name,
-        toolchain_type = "@bufbuild//:buf_toolchain_type",
-        # avoiding use of .format since {platform} is formatted by toolchains_repo for each platform.
-        toolchain = "@%s_{platform}//:buf_toolchain" % name,
-    )

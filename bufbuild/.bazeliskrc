@@ -1,3 +1,1 @@
-# Pin to 7.4.1 for now because 8.0.0 does not look at WORKSPACE
-# https://bazel.build/external/migration
-USE_BAZEL_VERSION=7.4.1
+USE_BAZEL_VERSION=9.0.0
