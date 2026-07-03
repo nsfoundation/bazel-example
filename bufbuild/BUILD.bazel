@@ -2,15 +2,3 @@ toolchain_type(
     name = "buf_toolchain_type",
     visibility = ["//visibility:public"],
 )
-
-# Execution platform matching the Namespace RBE Linux workers (x86_64). Pinning
-# the host/exec platform to this ensures exec-config tools (e.g. the prebuilt
-# protoc, the Go compiler) are fetched for the worker's architecture even when
-# the bazel client runs on a different arch (e.g. an arm64 CI runner).
-platform(
-    name = "rbe_linux_amd64",
-    constraint_values = [
-        "@platforms//os:linux",
-        "@platforms//cpu:x86_64",
-    ],
-)
