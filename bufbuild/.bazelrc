@@ -15,3 +15,12 @@ common --@com_google_protobuf//bazel/toolchains:prefer_prebuilt_protoc
 # (CC=/nix/store/.../gcc here), whose absolute path does not exist on the RBE
 # worker, failing remote actions with "cc: no such file or directory".
 common --@rules_go//go/config:pure
+
+# The Namespace RBE Linux workers are x86_64. Pin the execution and target
+# platforms so exec-config tools (prebuilt protoc, Go compiler) AND the produced
+# binaries match the worker arch, even when the bazel client runs on a different
+# arch (e.g. an arm64 CI runner). Without this, an arm64 client fetches the
+# arm64 prebuilt protoc and ships it to the x86_64 worker, failing with
+# "cannot execute binary file: Exec format error".
+common --extra_execution_platforms=//:rbe_linux_amd64
+common --platforms=//:rbe_linux_amd64
