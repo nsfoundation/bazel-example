@@ -6,10 +6,12 @@ version: v1
 # The plugins to run. "plugin" is required.
 plugins:
   # The name of the plugin.
-  # By default, buf generate will look for a binary named protoc-gen-NAME on your $PATH.
-  # Alternatively, use a remote plugin:
-  - plugin: buf.build/protocolbuffers/go:v1.28.1
-    # - plugin: go
-    # The the relative output directory.
+  # buf generate looks for a binary named protoc-gen-NAME on $PATH; `go`
+  # resolves to protoc-gen-go, which the buf_go_proto_library rule provides
+  # hermetically. We deliberately avoid a remote BSR plugin
+  # (e.g. buf.build/protocolbuffers/go) because it is non-hermetic and gets
+  # rate-limited on RBE.
+  - plugin: go
+    # The relative output directory.
     # Required.
     out: .
